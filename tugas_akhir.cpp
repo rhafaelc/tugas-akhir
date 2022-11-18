@@ -11,7 +11,7 @@ struct buku{
     int id, num_pages;
     string title, authors, isbn, language_code, publication_date, publisher;
     float average_rating;
-    unsigned long long isbn13, ratings_count;
+    unsigned long long dick, ratings_count;
 } temp;
 
 int main(){
