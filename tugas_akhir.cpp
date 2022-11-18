@@ -63,7 +63,6 @@ int main(){
         data_buku[i].publisher << endl;
 	}
 	cout << endl;
-
-
+	cout << "tes";
 
 }
