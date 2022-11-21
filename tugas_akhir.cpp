@@ -134,7 +134,7 @@ int main(){
 	cin >> key ;
 	cout << endl;
 	
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 11126; i++)
 	{
 		if (data_buku[i].isbn == key)
 		{
