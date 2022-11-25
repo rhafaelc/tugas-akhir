@@ -64,7 +64,7 @@ void _sort(buku data_buku[], int n){
 //Fungsi Untuk Menulis Data Peminjam Di Text File
 void tulis_pinjam(pinjam arr){
 	ofstream out_pinjam("data_pinjam.txt", ofstream::app);
-    out_pinjam << arr.nama << "\t" << arr.NIM << "\t" << arr.title << "\t" << arr.tanggal 
+    out_pinjam << arr.nama << "\t" << arr.NIM << "\t" << arr.isbn << "\t" << arr.title << "\t" << arr.tanggal 
 	<< "/" << arr.bulan << "/" << arr.tahun << "\t" << arr.tanggal1 << "/" << arr.bulan1 
 	<< "/" << arr.tahun1 << "\t" << arr.is_pinjam << endl;
 }
@@ -174,7 +174,7 @@ void pilihan1(){
     tulis_pinjam(data_pinjam);
 }
 
-// Menghitung berapa banyak baris dalam file (nantinya yang dipakai tidak lebih dari ((banyak row) - 1) karena dalam file terdapat (banyak row) baris di mana baris ke (banyak row - 1) kosong)
+// Menghitung berapa banyak baris dalam file (nantinya yang dipakai kurang dari ((banyak row) - 1) karena dalam file terdapat (banyak row) baris di mana baris ke (banyak row - 1) kosong)
 int count_row(int &count_pinjam){
     count_pinjam = 0;
     string buffer;
@@ -200,6 +200,7 @@ void read_file(int cnt, pinjam baca_pinjam[]){
     while (!out_pinjam.eof() && i < cnt){
 		getline(out_pinjam, baca_pinjam[i].nama, '\t');
 		getline(out_pinjam, baca_pinjam[i].NIM, '\t');
+		getline(out_pinjam, baca_pinjam[i].isbn, '\t');
 		getline(out_pinjam, baca_pinjam[i].title, '\t');
         out_pinjam >> baca_pinjam[i].tanggal;
         getline(out_pinjam, buffer, '/');
@@ -239,30 +240,37 @@ void pilihan2(){
     int i, index;
     int datasize_peminjam = sizeof(baca_pinjam)/sizeof(baca_pinjam[0]);
 
+    cout << "Daftar Peminjaman : " << endl;
+    cout << "===========================================================================================================================================" << endl;
+    cout << "|" << setw(20) << "Nama Peminjam" << setw(10) << "|" << setw(8)
+    << "NIM" << setw(7)  << "|" << setw(25) << "Judul Buku" 
+    << setw(20) << "|" << setw(15) << "Tanggal Pinjam" << setw(5)  << "|" << setw(23) 
+	<< "Tanggal Jatuh Tempo" << setw(5) << "|" << endl; 
+    cout << "===========================================================================================================================================" << endl;
+                
   //Sequential Searching untuk Mencari NIM terentu di dalam Array of Struct
-    for(i = 0; i < datasize_peminjam; i++){
-        if(baca_pinjam[i].NIM == key){
-            found = true;
-            index = i;
-            
-            cout << "Daftar Peminjaman : " << endl;
-            cout << "===========================================================================================================================================" << endl;
-            cout << "|" << setw(20) << "Nama Peminjam" << setw(10) << "|" << setw(8)
-            << "NIM" << setw(7)  << "|" << setw(25) << "Judul Buku" 
-            << setw(20) << "|" << setw(15) << "Tanggal Pinjam" << setw(5)  << "|" << setw(23) 
-			<< "Tanggal Jatuh Tempo" << setw(5) << "|" << endl; 
-            cout << "===========================================================================================================================================" << endl;
-                cout << "|" << setw(18) << left << baca_pinjam[i].nama << setw(12) << right << "|" << setw(10) 
-				<< baca_pinjam[i].NIM << setw(5) << "|" << baca_pinjam[i].title 
-                << setw(5) << right << "|" << setw(7) << baca_pinjam[i].tanggal << "/" << setw(2) 
-				<< setfill('0') << baca_pinjam[i].bulan << setw(0) << setfill(' ') << "/" << baca_pinjam[i].tahun
-                << setw(5)  << "|" << setw(10) << baca_pinjam[i].tanggal1 << "/" << setw(2) 
-				<< setfill('0') << baca_pinjam[i].bulan1 << setw(0) << setfill(' ') << "/" 
-				<< baca_pinjam[i].tahun1 << setw(10) << "|" << endl;
+    for(i = 0; i < cnt - 1; i++){
+        if(baca_pinjam[i].NIM == key && baca_pinjam[i].is_pinjam == true){
+            cout << "|" << setw(18) << left << baca_pinjam[i].nama << setw(12) << right << "|" << setw(10) 
+			<< baca_pinjam[i].NIM << setw(5) << "|" << baca_pinjam[i].title 
+            << setw(5) << right << "|" << setw(7) << baca_pinjam[i].tanggal << "/" << setw(2) 
+			<< setfill('0') << baca_pinjam[i].bulan << setw(0) << setfill(' ') << "/" << baca_pinjam[i].tahun
+            << setw(5)  << "|" << setw(10) << baca_pinjam[i].tanggal1 << "/" << setw(2) 
+			<< setfill('0') << baca_pinjam[i].bulan1 << setw(0) << setfill(' ') << "/" 
+			<< baca_pinjam[i].tahun1 << setw(10) << "|" << endl;
             cout << "===========================================================================================================================================" << "\n\n"; 
         }
     }
-
+    cout << "Masukkan ISBN buku yang ingin dikembalikan: " << endl; 
+    cin >> key;
+    for (i = 0; i < cnt - 1; i++){
+        if (baca_pinjam[i].isbn == key){
+            found = true;
+            baca_pinjam[i].is_pinjam = false; 
+            index = i;
+        }
+    }
+    
 	if (!found){
 		cout << "Data peminjam tidak ditemukan" << "\n\n";
 	}
@@ -292,12 +300,11 @@ void pilihan2(){
         else{
             cout << baca_pinjam[index].nama << " memiliki denda sebesar : Rp" << total << endl;
             cout << endl;
-        }
-        baca_pinjam[index].is_pinjam = false;  
+        } 
 
         ofstream ganti_pinjam("data_pinjam.txt");
         for (int i = 0; i < datasize_peminjam - 1; i++){
-            ganti_pinjam << baca_pinjam[i].nama << "\t" << baca_pinjam[i].NIM << "\t" << baca_pinjam[i].title << "\t" << baca_pinjam[i].tanggal 
+            ganti_pinjam << baca_pinjam[i].nama << "\t" << baca_pinjam[i].NIM << "\t" << baca_pinjam[i].isbn << "\t" << baca_pinjam[i].title << "\t" << baca_pinjam[i].tanggal 
 	        << "/" << baca_pinjam[i].bulan << "/" << baca_pinjam[i].tahun << "\t" << baca_pinjam[i].tanggal1 << "/" << baca_pinjam[i].bulan1 
 	        << "/" << baca_pinjam[i].tahun1 << "\t" << baca_pinjam[i].is_pinjam << endl;
         }
@@ -305,7 +312,6 @@ void pilihan2(){
 }
 
 //Fungsi Opsi Pilihan 3
-//Ganti "Telah Dikembalikan"
 void pilihan3(){
     cout << "=======================================================================================================================================================================" << endl;
 	cout << "|" << setw(20) << "Nama Peminjam" << setw(10) << "|" << setw(8) << "NIM" << setw(7)  
